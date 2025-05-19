@@ -1,0 +1,37 @@
+Class Code,Class Description by ESA,HEX Code,Bigger Class
+10,Rainfed cropland,#ffff64,Cropland
+11,Herbaceous cover cropland,#ffff64,Cropland
+12,Tree or shrub cover (Orchard) cropland,#ffff00,Cropland
+20,Irrigated cropland,#aaf0f0,Cropland
+51,Open evergreen broadleaved forest,#4c7300,Forest
+52,Closed evergreen broadleaved forest,#006400,Forest
+61,Open deciduous broadleaved forest (0.15<fc<0.4),#a8c800,Forest
+62,Closed deciduous broadleaved forest (fc>0.4),#00a000,Forest
+71,Open evergreen needle-leaved forest (0.15<fc<0.4),#005000,Forest
+72,Closed evergreen needle-leaved forest (fc>0.4),#003c00,Forest
+81,Open deciduous needle-leaved forest (0.15<fc<0.4),#286400,Forest
+82,Closed deciduous needle-leaved forest (fc>0.4),#285000,Forest
+91,Open mixed leaf forest (broadleaved and needle-leaved),#a0b432,Forest
+92,Closed mixed leaf forest (broadleaved and needle-leaved),#788200,Forest
+120,Shrubland,#966400,Shrubland
+121,Evergreen shrubland,#964b00,Shrubland
+122,Deciduous shrubland,#966400,Shrubland
+130,Grassland,#ffb432,Grassland
+140,Lichens and mosses,#ffdcd2,Sparse Vegetation
+150,Sparse vegetation (fc<0.15),#ffebaf,Sparse Vegetation
+152,Sparse shrubland (fc<0.15),#ffd278,Sparse Vegetation
+153,Sparse herbaceous (fc<0.15),#ffebaf,Sparse Vegetation
+181,Swamp,#00a884,Flooded Surfaces
+182,Marsh,#73ffdf,Flooded Surfaces
+183,Flooded flat,#9ebb3b,Flooded Surfaces
+184,Saline,#828282,Flooded Surfaces
+185,Mangrove,#f57ab6,Flooded Surfaces
+186,Salt marsh,#66cdab,Flooded Surfaces
+187,Tidal flat,#444f89,Flooded Surfaces
+190,Impervious surfaces,#c31400,Bare Surfaces
+200,Bare areas,#fff5d7,Bare Surfaces
+201,Consolidated bare areas,#dcdcdc,Bare Surfaces
+202,Unconsolidated bare areas,#fff5d7,Bare Surfaces
+210,Water body,#0046c8,Water Body
+220,Permanent ice and snow,#ffffff,Water Body
+0,Filled value,#ffffff,NA
