@@ -1,0 +1,168 @@
+---
+title: "YoMos_Landscape_Workshop"
+author: "Elizaveta Shcherbinina"
+date: "2025-05-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r 00 packages}
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(readxl)
+library(ggplot2)
+library(purrr)
+library(vegan)
+```
+
+
+```{r 01 setwd}
+setwd("...\\YoMos_Landcover_Workshop")
+```
+
+
+```{r 02 read in the gee data}
+
+#### 1000 m #####
+lm_metrics_1000m_1985 <- read.csv("./metrics_1000m_1985.csv", colClasses = "character")
+lm_metrics_1000m_1990 <- read.csv("./metrics_1000m_1990.csv", colClasses = "character")
+lm_metrics_1000m_1995 <- read.csv("./metrics_1000m_1995.csv", colClasses = "character")
+
+# Initialize an empty list to store the data frames
+lm_metrics_1000m <- list()
+
+for (year in c(2000:2015)) {
+  file_path <- paste0("./metrics_1000m_", year, ".csv")
+  
+  lm_metrics_1000m[[year]] <- read.csv(file_path, colClasses = "character")
+}
+
+# Combine all data frames into one
+lm_metrics_full_1000m <- bind_rows(lm_metrics_1000m)
+
+lm_metrics_full_1000m <- 
+  bind_rows(lm_metrics_full_1000m, lm_metrics_1000m_1985, 
+            lm_metrics_1000m_1990, lm_metrics_1000m_1995)
+
+
+
+# prepare for future merge with data_pr dataset:
+lm_metrics_full_1000m <- lm_metrics_full_1000m[,colSums(is.na(lm_metrics_full_1000m))<nrow(lm_metrics_full_1000m)]
+
+lm_metrics_full_1000m <- 
+  lm_metrics_full_1000m %>% 
+  mutate(buffer_radius_m = 1000)
+
+rm(lm_metrics_1000m, lm_metrics_1000m_1985, lm_metrics_1000m_1990, lm_metrics_1000m_1995)
+
+
+# unselect the unnessesary columns
+lm_metrics_full_selected <- 
+  lm_metrics_full_1000m %>% 
+  select(-.geo, -metrics, -system.index) %>% 
+  mutate(measurement_id = as.integer(measurement_id),
+         area_m2 = as.numeric(area_m2),
+         edgelength_m = as.numeric(edgelength_m),
+         buffer_radius_m = as.numeric(buffer_radius_m))
+```
+
+```{r 03 calculate buffer area and proportion of class}
+
+lm_metrics_full_selected_calc <- 
+  lm_metrics_full_selected %>% 
+  group_by(measurement_id, buffer_radius_m) %>% 
+  mutate(buffer_area_m2 = (pi*buffer_radius_m^2),
+         proportion = area_m2/buffer_area_m2) %>% 
+  mutate(perimeter_to_area = edgelength_m/area_m2) %>% 
+  ungroup()
+
+```
+
+```{r 04 prepare the results dataset}
+
+df_results <- 
+  lm_metrics_full_selected_calc %>% 
+  select(measurement_id, mean_yield_control_kgha, crop_type) %>% 
+  unique()
+```
+
+
+```{r 05 load the landcover data}
+landcover.meta<-read.csv('.\\legend_classcode_landcovertypes.csv',  sep = ',', dec = '.')
+```
+
+
+```{r 06 prepare the wide format dataframes}
+df_wide_proportion <- lm_metrics_full_selected_calc %>%
+  mutate(class_column = paste0("proportion_", class, "_1000")) %>%
+  pivot_wider(
+    id_cols = c(measurement_id),
+    names_from = class_column,
+    values_from = proportion,
+    values_fill = 0  # Fill missing combinations with 0
+  )
+
+
+df_wide_area <- lm_metrics_full_selected_calc %>%
+  mutate(class_column = paste0("aream2_", class, "_1000")) %>%
+  pivot_wider(
+    id_cols = c(measurement_id),
+    names_from = class_column,
+    values_from = area_m2,
+    values_fill = 0  # Fill missing combinations with 0
+  )
+```
+
+```{r 07 calculation of the area of the natural habitat}
+nat.hab.class.code <- landcover.meta$Class.Code[
+  !(landcover.meta$Bigger.Class %in% c("Bare Surfaces", "Cropland") |
+    landcover.meta$Class.Description.by.ESA == "Permanent ice and snow")
+]
+
+nat.hab.col.names <- paste0("proportion_", nat.hab.class.code, "_1000")
+df_results$nat.hab.1000 <- rowSums(df_wide_proportion[, nat.hab.col.names, drop = FALSE], na.rm = TRUE)
+```
+
+```{r 08 shannon index}
+noninert.land.class.code<-landcover.meta$Class.Code[-which(
+  landcover.meta$Bigger.Class=='Bare Surfaces'| 
+  landcover.meta$Class.Description.by.ESA=='Permanent ice and snow' )]
+
+shannon_cols <- paste0("aream2_", noninert.land.class.code, "_1000")
+shannon.df <- df_wide_area[, shannon_cols, drop = FALSE] %>% replace(is.na(.), 0)
+df_results$shannon.1000 <- diversity(shannon.df, index = "shannon")
+
+```
+
+```{r 09 simpsonsevennes}
+simpson_cols <- paste0("aream2_", noninert.land.class.code, "_1000")
+simpson.df <- df_wide_area[, simpson_cols, drop = FALSE] %>% replace(is.na(.), 0)
+df_results$simpsonsevenness.1000 <- diversity(simpson.df, index = "inv")
+```
+
+```{r 10 visualisation}
+df_results %>% 
+  filter(crop_type == "Maize") %>% 
+  ggplot(aes(x = shannon.1000, y = mean_yield_control_kgha)) +
+  geom_point(alpha = 0.6, color = "steelblue", size = 3) +
+  geom_smooth(method = "lm", formula = y ~ x, 
+              color = "darkred", se = TRUE, fill = "pink") +
+  labs(
+    x = "Shannon Diversity Index",
+    y = "Mean Yield (kg/ha)",
+    title = "Maize Yield vs Shannon Diversity Index") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  ) 
+```
+
+
+
+
+
