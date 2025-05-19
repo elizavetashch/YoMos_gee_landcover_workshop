@@ -60,6 +60,7 @@ years.forEach(function(year) {
 </details>
 
 ### Step 4: Buffer the points 
+
 <details> <summary>Click here to see the solution</summary>
 ```java
 function bufferPoints(radius, bounds) { 
@@ -74,7 +75,10 @@ function bufferPoints(radius, bounds) {
 
 
 ### Step 5: Edge Length and Area Calculation 
+
 <details> <summary>Click here to see the solution</summary>
+
+
 ```java
 // List of all land cover classes present in the map:
 var classes = [10, 11, 12, 20, 51, 52, 61, 62, 71, 72, 81, 82, 91, 92, 120, 121, 122, 
@@ -152,7 +156,9 @@ function unpackMetrics(feature) {
 </details>
 
 ### Step 6: Processing and Export 
+
 <details> <summary>Click here to see the solution</summary>
+
 ```java
 // Apply function to process metrics (edge length and area) for each year
 /*
@@ -415,7 +421,7 @@ for (var i = 1; i <= 23; i++) {
 }
 
 ```
-</details></details>
+</details>
 
 
 <hr>
