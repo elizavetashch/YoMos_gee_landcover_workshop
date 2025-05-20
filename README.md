@@ -62,7 +62,8 @@ years.forEach(function(year) {
 ### Step 4: Buffer the points 
 
 <details> <summary>Click here to see the solution</summary>
-```java
+
+  ```java
 function bufferPoints(radius, bounds) { 
   return function(pt) {
     pt = ee.Feature(pt);
@@ -161,7 +162,7 @@ function unpackMetrics(feature) {
 
 ```java
 // Apply function to process metrics (edge length and area) for each year
-/*
+
 years.forEach(function(year) {
   var metricsResults = processMetricsForYear(filteredPoints[year], images[year], year);
   var unpackedFeatureCollection = ee.FeatureCollection(metricsResults).map(unpackMetrics).flatten();
@@ -173,10 +174,8 @@ years.forEach(function(year) {
     fileFormat: 'CSV' 
   });
 });
-*/
 
 // For annual mosaic (2000 onwards)
-/*
 for (var i = 1; i <= 23; i++) {
   var year = 1999 + i;  // starts at year 2000
   var image = annual.mosaic().select("b" + i);
@@ -192,7 +191,6 @@ for (var i = 1; i <= 23; i++) {
     fileFormat: 'CSV' 
   });
 }
-*/
 
 ```
 </details>
