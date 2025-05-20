@@ -17,7 +17,7 @@
 
 ### Step 1
 
-1. Upload the 20250520_YoMos_sample.csv into your assets in [Google Earth Engine] https://code.earthengine.google.com/
+1. Upload the 20250520_YoMos_sample.csv into your assets in [GoogleEarthEngine](https://code.earthengine.google.com/)
 2. Create a variable called `points` to read in your dataset
 
 <details>
@@ -437,5 +437,4 @@ The R markdown is well structured and should be easy to follow.
 The shannon and simpson indices will be calculated using the `vegan`package.
 
 <hr>
-To check your code, or if you lost track of steps, please check the provided solution: 
-[Land cover metrics calculation GEE](https://code.earthengine.google.com/4731a23a969102a10127c3523887c235?noload=true)
+To check your code, or if you lost track of steps, please check the provided solution: https://code.earthengine.google.com/a517b593c221b081b79c9dbe9aa0246f
